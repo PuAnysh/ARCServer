@@ -139,9 +139,13 @@ int ARCFaceEngine::getFeature(unsigned char *data, int width, int height, MUInt3
 
     getFaceInputImg(data , width , height , format , inputImg);
     int FDret = AFD_FSDK_StillImageFaceDetection(FDEngine  , &inputImg , &faceResult);
-    if(FDret != MOK || faceResult->nFace != 1){
+    if(FDret != MOK){
         fprintf(stderr , "fail to AFD_FSDK_StillImageFaceDetection(): 0x%x\r\n" , FDret);
         return  -1;
+    }
+    if(faceResult->nFace != 1){
+        fprintf(stderr , "no face in picture \r\n");
+        return -1;
     }
     AFR_FSDK_FACEINPUT fr_inputface;
     fr_inputface.lOrient = AFR_FSDK_FOC_0;
@@ -168,7 +172,8 @@ int ARCFaceEngine::getFeature(unsigned char *data, int width, int height, MUInt3
 int ARCFaceEngine::compareFeature(AFR_FSDK_FACEMODEL* model ,AFR_FSDK_FACEMODEL* localmodel)
 {
     MFloat res;
-    return AFR_FSDK_FacePairMatching(FREngine , model, localmodel , &res);
+    AFR_FSDK_FacePairMatching(FREngine , model, localmodel , &res);
+    printf("res is   %.8f\r\n" , res);
     if(res > 0.95){
         return 1;
     }

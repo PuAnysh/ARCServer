@@ -32,17 +32,17 @@ public:
             char* data;
             const void* header=  buf->peek();
             int32_t len = *static_cast<const int32_t*>(header); // SIGBUS
-
+            LOG_INFO<<buf->readableBytes()<<" is the tatol lenth of buffer \r\n";
             if(len <= buf->readableBytes()){
                 buf->retrieve(kHeaderLen);
                 const void* flag_head = buf->peek();
-                int32_t flag = *static_cast<const int32_t*>(flag_head); // SIGBUS
+                int32_t flag_be32 = *static_cast<const int32_t*>(flag_head); // SIGBUS
+                const int32_t flag = muduo::net::sockets::networkToHost32(flag_be32);
                 buf->retrieve(kHeaderLen);
                 if( flag == 0x636f6d70 ){
                     /*
                      * get the raw data
                     */
-                    LOG_INFO<<len<<" "<<buf->readableBytes();
                     int imglen = len - 2*kHeaderLen;
                     char* imghead = const_cast<char*>(buf->peek());
                     data = (char*)malloc(sizeof(char)*imglen);

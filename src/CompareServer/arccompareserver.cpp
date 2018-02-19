@@ -81,7 +81,6 @@ void ARCCompareServer::onStringMessage_add(const TcpConnectionPtr &conn, char* d
             conn->send(message);
         }
         else{
-            printf("dfsdfasd\r\n");
             muduo::string message("no" , 2);
             conn->send(message);
         }
