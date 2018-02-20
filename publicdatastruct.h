@@ -10,5 +10,6 @@ struct UserModel{
 struct GuestModel{
     AFR_FSDK_FACEMODEL model;
     int UserID;
+    int addTime;
 };
 #endif // PUBLICDATASTRUCT_H

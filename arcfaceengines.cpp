@@ -62,11 +62,8 @@ int ARCFaceEngines::compareFace(char *data , int ldata)
     if(!load_ok){
         printf("CurEngine is %d\r\n" , curEngineIndex);
         pushEngineIndex(curEngineIndex);
-        //printf("load the image\r\n");
         return 1;
     }
-    FILE *fp = fopen("dsfdsa.jpg" , "wb");
-    fwrite(data , 1 , ldata , fp);
     int size = img.byteCount()/4*3;
     uchar* rawdata = img.bits();
     uchar* bmpdata = (uchar*)malloc(size);
@@ -111,7 +108,6 @@ int ARCFaceEngines::addFeature(char *data, int ldata , int id)
         if((i+1)%4 == 0) continue;
         bmpdata[ptr_bmp++] = rawdata[i];
     }
-    printf("whith is  %d height is %d\r\n" , img.width() , img.height());
     AFR_FSDK_FACEMODEL localmodel;
     memset(&localmodel , 0 , sizeof(AFR_FSDK_FACEMODEL));
     int FRret = CurEngine->getFeature(bmpdata , img.width() , img.height() , ASVL_PAF_RGB24_B8G8R8, & localmodel);

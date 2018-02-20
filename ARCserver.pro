@@ -85,7 +85,8 @@ HEADERS += \
     key.h \
     arcfacefeaturedb.h \
     arcfaceengines.h \
-    publicdatastruct.h
+    publicdatastruct.h \
+    src/GuestServer/guestcodec.h
 # muode lib
 unix:!macx: LIBS += -L$$PWD/../../DevelopLIBS/release-install/lib/ -lmuduo_base_cpp11
 
