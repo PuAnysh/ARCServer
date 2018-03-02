@@ -17,8 +17,9 @@ public:
     ARCFaceEngines();
     int startEngines();
     int stopEngines();
-    int compareFace(char* data , int ldata);
+    int compareFace(char* data , int ldata , string ip);
     int addFeature(char* data , int ldata, int id);
+    int addFeature_g(char *data, int ldata, int id);
 private:
     static QSemaphore sem;
     int popEngineIndex();

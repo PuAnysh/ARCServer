@@ -18,9 +18,11 @@ public:
                                   char* data,
                                   int len,
                                   int id)> StringMessageCallback_add;
-    explicit CompareCodec(const StringMessageCallback_comp& cb_comp , const StringMessageCallback_add& cb_add)
+    explicit CompareCodec(const StringMessageCallback_comp& cb_comp , const StringMessageCallback_add& cb_addf ,
+                          const StringMessageCallback_add& cb_addu)
         : messageCallback_comp(cb_comp),
-          messageCallback_add(cb_add)
+          messageCallback_addf(cb_addf),
+          messageCallback_addu(cb_addu)
     {
     }
 
@@ -39,22 +41,43 @@ public:
                 const int32_t flag = muduo::net::sockets::networkToHost32(flag_be32);
                 buf->retrieve(kHeaderLen);
                 if( flag == 0x636f6d70 ){
-                    /*
+                    /* comp
                      * get the raw data
                     */
+
                     int imglen = len - 2*kHeaderLen;
                     char* imghead = const_cast<char*>(buf->peek());
                     data = (char*)malloc(sizeof(char)*imglen);
                     memcpy(data , imghead , imglen);
                     buf->retrieve(imglen);
+
                     messageCallback_comp(conn , data , imglen);
                 }
                 else if(flag == 0x61646466){
-                    /*
+                    /*addu
                      * add feature
                     */
                     /*
                      * get the id
+                    */
+                    LOG_INFO<<"ADDU";
+                    const void* id_header=  buf->peek();
+                    int32_t id_be32 = *static_cast<const int32_t*>(id_header);
+                    buf->retrieve(kHeaderLen);
+                    /*
+                     * get the raw data
+                    */
+                    int imglen = len - 3*kHeaderLen;
+                    char* imghead = const_cast<char*>(buf->peek());
+                    data = (char*)malloc(sizeof(char)*imglen);
+                    memcpy(data , imghead , imglen);
+                    buf->retrieve(imglen);
+                    messageCallback_addf(conn , data , imglen , id_be32);
+
+                }
+                else if(flag == 0x61646467){
+                    /*
+                     * add feature of guest
                     */
                     const void* id_header=  buf->peek();
                     int32_t id_be32 = *static_cast<const int32_t*>(id_header);
@@ -67,8 +90,7 @@ public:
                     data = (char*)malloc(sizeof(char)*imglen);
                     memcpy(data , imghead , imglen);
                     buf->retrieve(imglen);
-                    messageCallback_add(conn , data , imglen , id_be32);
-
+                    messageCallback_addu(conn , data , imglen , id_be32);
                 }
             }
         }
@@ -89,7 +111,7 @@ private:
         return x<y? x : y;
     }
     StringMessageCallback_comp messageCallback_comp;
-    StringMessageCallback_add messageCallback_add;
+    StringMessageCallback_add messageCallback_addf , messageCallback_addu;
     const static size_t kHeaderLen = sizeof(int32_t);
 };
 

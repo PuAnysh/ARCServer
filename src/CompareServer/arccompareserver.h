@@ -36,7 +36,11 @@ private:
     void onStringMessage_comp(const TcpConnectionPtr& conn,
                          char *data,
                          int len);
-    void onStringMessage_add(const TcpConnectionPtr &conn ,
+    void onStringMessage_addu(const TcpConnectionPtr &conn ,
+                             char *data,
+                             int len,
+                             int id);
+    void onStringMessage_addg(const TcpConnectionPtr &conn ,
                              char *data,
                              int len,
                              int id);

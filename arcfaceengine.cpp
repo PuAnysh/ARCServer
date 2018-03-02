@@ -144,7 +144,7 @@ int ARCFaceEngine::getFeature(unsigned char *data, int width, int height, MUInt3
         return  -1;
     }
     if(faceResult->nFace != 1){
-        fprintf(stderr , "no face in picture \r\n");
+        fprintf(stderr , "no face in picture %d\r\n" , faceResult->nFace);
         return -1;
     }
     AFR_FSDK_FACEINPUT fr_inputface;
@@ -173,7 +173,7 @@ int ARCFaceEngine::compareFeature(AFR_FSDK_FACEMODEL* model ,AFR_FSDK_FACEMODEL*
 {
     MFloat res;
     AFR_FSDK_FacePairMatching(FREngine , model, localmodel , &res);
-    printf("res is   %.8f\r\n" , res);
+    fprintf(stderr ,"res is   %.8f\r\n" , res);
     if(res > 0.95){
         return 1;
     }

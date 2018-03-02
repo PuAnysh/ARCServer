@@ -63,32 +63,35 @@ void ARCGuestServer::onStringMessage_query(const TcpConnectionPtr &conn, int id)
 {
     lock.lockForRead();
     int flag = 0;
-    //LOG_INFO<<id<<" "<<guestList.size() <<"\r\n";
     for(list<GuestPic>::iterator it = guestList.begin() ; it != guestList.end() ; it++){
-
         if(id == it->id){
             flag++;
-            //LOG_INFO<<id<<" vs   "<<it->id<<"\r\n";
             int32_t total_len = it->len_pic+4;
+            /*
+             * send data of image
+             * the head is the total length of data in TCP/IP
+             * follow by the raw data of jpg image
+            */
             conn->send((char*)&total_len , 4);
             conn->send(it->data , it->len_pic);
         }
     }
     if(flag == 0){
-        conn->send((char*)&flag , 4);
+        conn->send((char*)"empty" , 5);
     }
     lock.unlock();
 }
 
 void ARCGuestServer::clearList()
 {
+    /*
+     * clear outime Guest information
+    */
     if(!lock.tryLockForWrite()) return;
     QTime curTime = QTime::currentTime();
     curTime =  curTime.addSecs(-RetainTime);
-
     list<GuestPic>::iterator it = guestList.begin();
     while((it->addTime)<= curTime && it!= guestList.end()){
-        LOG_INFO<<curTime.minute()<<" "<< it->addTime.minute();
         list<GuestPic>::iterator it_ = it;
         free(it_->data);
         it++;
